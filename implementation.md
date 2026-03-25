@@ -35,6 +35,6 @@
 - [x] **Inventory Dashboard**: Aggregated stock views, warehouse-wise breakdown, and low stock alerts.
 
 ## Phase 5: Frontend Integration & Dashboard (Planned)
-- [ ] React-Redux Toolkit setup for State Management.
-- [ ] Professional UI Theme using tailwindcss.
-- [ ] Dashboard with stock level alerts and sales analytics.
+- [x] React-Redux Toolkit setup for State Management.
+- [ ] Connect Sales & Purchase modules with API.
+- [ ] Implementing UI components using Lucide Icons and simple CSS.
