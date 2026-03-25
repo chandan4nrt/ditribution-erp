@@ -28,9 +28,11 @@
 - [x] Purchase Order (PO): Header/Item schemas, status transitions, and DTOs.
 - [x] Goods Received Note (GRN): Automatic stock addition in `ProductMaster` upon receipt.
 - [x] Sales Order (SO): Stock availability check and automatic deduction in `ProductMaster` upon finalization (OPEN status).
+- [x] **Sales Invoicing**: Financial document generation from Sales Orders.
 - [x] **Stock Tracking Refactor**: Added `WarehouseStock` entity for location-wise stock management.
 - [x] **Stock Transfer**: Moving goods between warehouses with status-based stock movement (DRAFT -> SENT -> RECEIVED).
-- [ ] Multi-Warehouse Inventory Dashboard.
+- [x] **Stock Adjustments**: Manual stock correction (add/subtract) with reason tracking.
+- [x] **Inventory Dashboard**: Aggregated stock views, warehouse-wise breakdown, and low stock alerts.
 
 ## Phase 5: Frontend Integration & Dashboard (Planned)
 - [ ] React-Redux Toolkit setup for State Management.
