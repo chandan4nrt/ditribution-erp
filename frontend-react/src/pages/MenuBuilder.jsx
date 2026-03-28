@@ -3,6 +3,8 @@ import axios from 'axios';
 import * as Icons from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const MENU_MASTER_URL = 'http://localhost:8080/api/menus';
+
 const MenuForm = ({ onMenuAdded, existingMenus }) => {
   const [formData, setFormData] = useState({
     menuName: '',
@@ -33,12 +35,18 @@ const MenuForm = ({ onMenuAdded, existingMenus }) => {
     setIsSubmitting(true);
     try {
       const payload = { ...formData, parentId: formData.parentId || null };
+      const token = localStorage.getItem('token');
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      };
       
       let response;
       if (formData.parentId) {
-        response = await axios.post(`/api/menus/${formData.parentId}/submenus`, payload);
+        response = await axios.post(`${MENU_MASTER_URL}/${formData.parentId}/submenus`, payload, config);
       } else {
-        response = await axios.post('/api/menus', payload);
+        response = await axios.post(MENU_MASTER_URL, payload, config);
       }
 
       onMenuAdded(response.data);

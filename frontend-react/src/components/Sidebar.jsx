@@ -64,6 +64,14 @@ const NavItem = ({ item, isCollapsed }) => {
 };
 
 const Sidebar = ({ menus, isCollapsed, toggleSidebar }) => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isAdmin = user.role === 'ADMIN';
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  };
+
   return (
     <aside 
       className={`glass border-r border-slate-800 transition-all duration-500 ease-in-out z-50 flex flex-col
@@ -88,11 +96,11 @@ const Sidebar = ({ menus, isCollapsed, toggleSidebar }) => {
         </div>
         
         <NavLink
-            to="/"
+            to="/dashboard"
+            end
             className={({ isActive }) => 
               `flex items-center gap-3 p-3 rounded-xl mb-1 transition-all duration-200
-              ${isActive ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'}`
-            }
+              ${isActive ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'}`}
           >
             <Icons.LayoutGrid size={20} />
             {!isCollapsed && <span className="text-sm font-semibold tracking-wide">Dashboard</span>}
@@ -105,35 +113,50 @@ const Sidebar = ({ menus, isCollapsed, toggleSidebar }) => {
         ))}
         
         <NavLink
-            to="/menu-builder"
+            to="/dashboard/menu-builder"
             className={({ isActive }) => 
               `flex items-center gap-3 p-3 rounded-xl mb-1 transition-all duration-200
-              ${isActive ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'}`
-            }
+              ${isActive ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'}`}
           >
             <Icons.Settings size={20} />
             {!isCollapsed && <span className="text-sm font-semibold tracking-wide">Menu Builder</span>}
         </NavLink>
+
+        {isAdmin && (
+          <NavLink
+              to="/dashboard/admin"
+              className={({ isActive }) => 
+                `flex items-center gap-3 p-3 rounded-xl mb-1 transition-all duration-200
+                ${isActive ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'}`}
+            >
+              <Icons.Users size={20} />
+              {!isCollapsed && <span className="text-sm font-semibold tracking-wide">User Management</span>}
+          </NavLink>
+        )}
       </nav>
 
       <div className="p-4">
         <div className={`glass p-4 rounded-2xl transition-all duration-300 ${isCollapsed ? 'px-2' : ''}`}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-indigo-600 flex items-center justify-center text-white font-bold shrink-0 shadow-inner">
-              AD
+              {user.username ? user.username.substring(0, 2).toUpperCase() : '??'}
             </div>
             {!isCollapsed && (
               <div className="overflow-hidden">
-                <p className="text-sm font-bold text-white truncate">Administrator</p>
-                <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Super Auth</p>
+                <p className="text-sm font-bold text-white truncate">{user.fullName || 'User'}</p>
+                <p className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{user.role || 'Guest'}</p>
               </div>
             )}
           </div>
           {!isCollapsed && (
-            <button className="w-full mt-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors flex items-center justify-center gap-2">
+            <NavLink 
+              to="/login"
+              onClick={handleLogout}
+              className="w-full mt-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors flex items-center justify-center gap-2"
+            >
               <Icons.LogOut size={14} />
               Sign Out
-            </button>
+            </NavLink>
           )}
         </div>
       </div>

@@ -18,3 +18,8 @@ nrt/
 
 run spring boot app in antigravity - powershell
 ./mvnw spring-boot:run
+
+
+how to run in spring sts 
+1- maven install
+2 - run as spring boot app

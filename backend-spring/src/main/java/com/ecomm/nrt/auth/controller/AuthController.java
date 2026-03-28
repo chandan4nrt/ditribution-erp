@@ -1,9 +1,6 @@
 package com.ecomm.nrt.auth.controller;
 
-import com.ecomm.nrt.auth.dto.AuthResponse;
-import com.ecomm.nrt.auth.dto.LoginRequest;
-import com.ecomm.nrt.auth.dto.RegisterRequest;
-import com.ecomm.nrt.auth.dto.UserProfileResponse;
+import com.ecomm.nrt.auth.dto.*;
 import com.ecomm.nrt.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -27,9 +24,19 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // ── Register (ADMIN creates new users) ─────────────────────────────────
+    // ── Public Signup (waitlist) ───────────────────────────────────────────
+    @PostMapping("/signup")
+    @Operation(summary = "Public signup - account goes to admin approval waitlist")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<UserProfileResponse> signup(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signup(request));
+    }
+
+    // ── Admin: Register & immediately activate a user ─────────────────────
     @PostMapping("/register")
-    @Operation(summary = "Register a new user (Admin only)")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Admin-only: Create and immediately activate a user",
+               security = @SecurityRequirement(name = "bearerAuth"))
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
@@ -60,12 +67,41 @@ public class AuthController {
         return ResponseEntity.ok(authService.getAllUsers());
     }
 
-    // ── Toggle user active/inactive (Admin only) ───────────────────────────
+    // ── List pending / waitlist users (Admin only) ─────────────────────────
+    @GetMapping("/users/pending")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all users pending approval (Admin only)",
+               security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<List<UserProfileResponse>> getPendingUsers() {
+        return ResponseEntity.ok(authService.getPendingUsers());
+    }
+
+    // ── Approve a user (Admin only) ────────────────────────────────────────
+    @PostMapping("/users/{userId}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Approve a pending user (Admin only)",
+               security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<UserProfileResponse> approveUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(authService.approveUser(userId));
+    }
+
+    // ── Toggle user active/blocked (Admin only) ────────────────────────────
     @PatchMapping("/users/{userId}/toggle-status")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Activate or deactivate a user (Admin only)",
+    @Operation(summary = "Block or unblock a user (Admin only)",
                security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<UserProfileResponse> toggleStatus(@PathVariable Long userId) {
         return ResponseEntity.ok(authService.toggleUserStatus(userId));
+    }
+
+    // ── Change user role (Admin only) ──────────────────────────────────────
+    @PatchMapping("/users/{userId}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Change a user's role (Admin only)",
+               security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<UserProfileResponse> changeRole(
+            @PathVariable Long userId,
+            @Valid @RequestBody ChangeRoleRequest request) {
+        return ResponseEntity.ok(authService.changeUserRole(userId, request.getRole()));
     }
 }

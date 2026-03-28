@@ -30,7 +30,8 @@ public class SecurityConfig {
 
     // ── Public endpoints (no token needed) ────────────────────────────────
     private static final String[] PUBLIC_URLS = {
-            "/api/auth/**",
+            "/api/auth/login",
+            "/api/auth/signup",   // public self-registration to waitlist
             "/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",

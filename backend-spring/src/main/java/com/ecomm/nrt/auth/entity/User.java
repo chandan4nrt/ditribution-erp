@@ -47,6 +47,11 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean isActive = true;
 
+    /** false = waiting for admin approval (waitlist) */
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isApproved = false;
+
     @Column(nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -67,6 +72,7 @@ public class User implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() { return true; }
 
+    /** Account must be active AND approved by admin to be usable */
     @Override
-    public boolean isEnabled() { return isActive; }
+    public boolean isEnabled() { return isActive && isApproved; }
 }

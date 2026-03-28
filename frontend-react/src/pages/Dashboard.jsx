@@ -48,6 +48,8 @@ const Dashboard = () => {
     }
   };
 
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
   return (
     <div className="min-h-screen p-8 bg-slate-950/50">
       <header className="flex items-center justify-between mb-10">
@@ -68,8 +70,13 @@ const Dashboard = () => {
           </button>
           <div className="h-10 w-px bg-slate-800 mx-2" />
           <div className="flex items-center gap-3 glass py-1.5 px-4 rounded-2xl">
-            <div className="w-8 h-8 rounded-xl bg-brand/20 flex items-center justify-center text-brand font-bold">A</div>
-            <span className="text-sm font-semibold text-slate-200">Admin</span>
+            <div className="w-8 h-8 rounded-xl bg-brand/20 flex items-center justify-center text-brand font-bold">
+              {user.username ? user.username.charAt(0).toUpperCase() : '?'}
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-slate-200">{user.username || 'User'}</span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{user.role || 'Guest'}</span>
+            </div>
           </div>
         </div>
       </header>
